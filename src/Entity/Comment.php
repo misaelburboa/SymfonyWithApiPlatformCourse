@@ -8,7 +8,10 @@ use App\Entity\User;
 use App\Entity\BlogPost;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *      itemOperations={"get"},
+ *      collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
 class Comment
