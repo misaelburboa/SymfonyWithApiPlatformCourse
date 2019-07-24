@@ -7,10 +7,17 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\AuthoredEntityInterface;
+use DateTimeInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
  * @ApiResource(
+ *      denormalizationContext={
+ *          "groups"={"post"}
+ *      },
  *      itemOperations={
  *          "get",
  *          "put"={
@@ -25,7 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      }
  * )
  */
-class BlogPost
+class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
      * @ORM\Id()
@@ -40,12 +47,12 @@ class BlogPost
      * @Assert\Length(
      *      min=10
      * )
+     * @Groups({"post"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank()
      */
     private $published;
 
@@ -53,8 +60,10 @@ class BlogPost
      * @ORM\Column(type="text")
      * @Assert\NotBlank()
      * @Assert\Length(
-     *      min=20
+     *      min=20,
+     *      max=3000
      * )
+     * @Groups({"post"})
      */
     private $content;
 
@@ -67,6 +76,7 @@ class BlogPost
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
+     * @Groups({"post"})
      */
     private $slug;
 
@@ -98,12 +108,12 @@ class BlogPost
         return $this;
     }
 
-    public function getPublished(): ?\DateTimeInterface
+    public function getPublished(): ?DateTimeInterface
     {
         return $this->published;
     }
 
-    public function setPublished(\DateTimeInterface $published): self
+    public function setPublished(DateTimeInterface $published): PublishedDateEntityInterface
     {
         $this->published = $published;
 
@@ -122,7 +132,11 @@ class BlogPost
         return $this;
     }
 
-    public function setAuthor(User $author):self
+    /**
+     * @param UserInterface $author
+     * @return AuthoredEntityInterface
+     */
+    public function setAuthor(UserInterface $author):AuthoredEntityInterface
     {
         $this->author = $author;
         return $this;
@@ -145,10 +159,8 @@ class BlogPost
     }
 
     /**
-     * Get blogposts' comments
-     *
-     * @return  $comments
-     */ 
+     * @return Collection
+     */
     public function getComments():Collection
     {
         return $this->comments;

@@ -6,15 +6,33 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
 use App\Entity\BlogPost;
+use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\AuthoredEntityInterface;
+use App\Entity\PublishedDateEntityInterface;
+use DateTimeInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *      itemOperations={"get"},
- *      collectionOperations={"get"}
+ *      denormalizationContext={
+ *          "groups"={"post"}
+ *      },
+ *      itemOperations={
+ *          "get",
+ *          "put"={
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
+ *          }
+ *      },
+ *      collectionOperations={
+ *          "get",
+ *          "post"={
+ *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
+ *          }
+ *      }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
-class Comment
+class Comment implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
     /**
      * @ORM\Id()
@@ -25,6 +43,7 @@ class Comment
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"post"})
      */
     private $content;
 
@@ -63,19 +82,19 @@ class Comment
         return $this;
     }
 
-    public function getPublished(): ?\DateTimeInterface
+    public function getPublished(): ?DateTimeInterface
     {
         return $this->published;
     }
 
-    public function setPublished(\DateTimeInterface $published): self
+    public function setPublished(DateTimeInterface $published): PublishedDateEntityInterface
     {
         $this->published = $published;
 
         return $this;
     }
 
-    public function setAuthor(User $author):self
+    public function setAuthor(UserInterface $author):AuthoredEntityInterface
     {
         $this->author = $author;
         return $this;
