@@ -14,8 +14,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "get",
  *          "put"={
- *              //gets user from the token send so it checks: (post's author == user from token)
- *              //Symfony makes available the user internally based on the token that is receiving
  *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
  *          }
  *      },
