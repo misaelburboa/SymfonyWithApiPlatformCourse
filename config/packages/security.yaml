@@ -13,15 +13,19 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         api:
+            #everything under /api will be secured 
             pattern: ^/api
+            #if is stateless each request should include a jwt token
             stateless: true
+            #default user does not have to be authenticated, it means is open
             anonymous: true
-            json_login:
+            #How the user will be authenticated
+            json_login: #no token needed
                 #Here authentication will happen (token generation)
                 check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-            guard:
+            guard: #token required
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
     # Easy way to control access for large sections of your site
