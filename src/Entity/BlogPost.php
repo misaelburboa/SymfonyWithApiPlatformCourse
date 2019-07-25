@@ -20,7 +20,11 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  *          "groups"={"post"}
  *      },
  *      itemOperations={
- *          "get",
+ *          "get"={
+ *              "normalization_context"={
+ *                 "groups"={"get-blog-post-with-author"}
+ *             }
+ *          },
  *          "put"={
  *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
  *          }
@@ -39,6 +43,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"get-blog-post-with-author"})
      */
     private $id;
 
@@ -48,12 +53,13 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @Assert\Length(
      *      min=10
      * )
-     * @Groups({"post"})
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"get-blog-post-with-author"})
      */
     private $published;
 
@@ -64,13 +70,14 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      *      min=20,
      *      max=3000
      * )
-     * @Groups({"post"})
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $content;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get-blog-post-with-author", "get-blog-post-with-author"})
      */
     private $author;
 
@@ -84,6 +91,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
      * @ApiSubresource()
+     * @Groups({"get-blog-post-with-author"})
      * @var $comments
      */
     private $comments;
