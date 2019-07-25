@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\AuthoredEntityInterface;
 use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
@@ -82,6 +83,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
+     * @ApiSubresource()
      * @var $comments
      */
     private $comments;
