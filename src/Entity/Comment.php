@@ -20,13 +20,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={
  *          "get",
  *          "put"={
- *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"
+ *              "access_control"="is_granted('ROLE_EDITOR') or (is_granted('ROLE_COMMENTATOR') and object.getAuthor() == user)"
  *          }
  *      },
  *      collectionOperations={
  *          "get",
  *          "post"={
- *              "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
+ *              "access_control"="is_granted('ROLE_COMMENTATOR')"
  *          }
  *      },
  *      subresourceOperations={
