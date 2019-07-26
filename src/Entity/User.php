@@ -47,11 +47,19 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class User implements UserInterface
 {
+    const ROLE_COMMENTATOR = 'ROLE_COMMENTATOR';
+    const ROLE_WRITER = 'ROLE_WRITER';
+    const ROLE_EDITOR = 'ROLE_EDITOR';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_SUPERADMIN = 'ROLE_SUPERADMIN';
+
+    const DEFAULT_ROLES = [self::ROLE_COMMENTATOR];
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->roles = self::DEFAULT_ROLES;
     }
     /**
      * @ORM\Id()
@@ -119,6 +127,11 @@ class User implements UserInterface
      * @Groups({"get"})
      */
     private $comments;
+
+    /**
+     * @ORM\Column(type="simple_array", length=200)
+     */
+    private $roles;
 
     public function getId(): ?int
     {
@@ -190,12 +203,6 @@ class User implements UserInterface
         return $this->posts;
     }
 
-    public function getRoles()
-    {
-        return ['ROLE_USER'];
-    }
-
-
     public function getSalt()
     {
         return null;
@@ -214,6 +221,24 @@ class User implements UserInterface
     public function setRetypedPassword($retypedPassword): self
     {
         $this->retypedPassword = $retypedPassword;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @return  self
+     */ 
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
 
         return $this;
     }
