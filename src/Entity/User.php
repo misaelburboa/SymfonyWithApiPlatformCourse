@@ -108,7 +108,7 @@ class User implements UserInterface
     private $name;
 
     /**
-     * @Groups({"post", "put", "get-admin"})
+     * @Groups({"post", "put", "get-admin", "get-owner"})
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Email()
@@ -130,6 +130,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="simple_array", length=200)
+     * @Groups({"get-admin", "get-owner"})
      */
     private $roles;
 
