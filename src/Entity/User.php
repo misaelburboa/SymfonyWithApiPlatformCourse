@@ -66,12 +66,6 @@ class User implements UserInterface
 
     const DEFAULT_ROLES = [self::ROLE_COMMENTATOR];
 
-    public function __construct()
-    {
-        $this->posts = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->roles = self::DEFAULT_ROLES;
-    }
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -179,6 +173,25 @@ class User implements UserInterface
      * @ORM\Column(type="integer", nullable=true)
      */
     private $passwordChangeDate;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $enabled;
+
+    /**
+     * @ORM\Column(type="string", length=40, nullable=true)
+     */
+    private $confirmationToken;
+
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->roles = self::DEFAULT_ROLES;
+        $this->enabled = false;
+        $this->confirmationToken = null;
+    }
 
     public function getId(): ?int
     {
@@ -349,9 +362,34 @@ class User implements UserInterface
     /**
      * @return  self
      */ 
-    public function setPasswordChangeDate($passwordChangeDate)
+    public function setPasswordChangeDate($passwordChangeDate): self
     {
         $this->passwordChangeDate = $passwordChangeDate;
+
+        return $this;
+    }
+
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+
+    public function setEnabled($enabled): self
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+    public function setConfirmationToken($confirmationToken):self
+    {
+        $this->confirmationToken = $confirmationToken;
 
         return $this;
     }
