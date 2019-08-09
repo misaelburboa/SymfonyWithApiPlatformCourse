@@ -9,14 +9,20 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Security\TokenGenerator;
 
-class PasswordHashSubscriber implements EventSubscriberInterface 
+class UserRegisterSubscriber implements EventSubscriberInterface 
 {
     private $passwordEncoder;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-    {
-        $this->passwordEncoder = $passwordEncoder;    
+    private $tokenGenerator;
+
+    public function __construct(
+        UserPasswordEncoderInterface $passwordEncoder,
+        TokenGenerator $tokenGenerator
+    ) {
+        $this->passwordEncoder = $passwordEncoder;
+        $this->tokenGenerator = $tokenGenerator;
     }
     /**
      * Returns an array of events this subscriber wants to listen to.
@@ -26,12 +32,13 @@ class PasswordHashSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::VIEW => ['hashPassword', EventPriorities::PRE_WRITE]
+            KernelEvents::VIEW => ['userRegistered', EventPriorities::PRE_WRITE]
         ];
     }
 
-    public function hashPassword(GetResponseForControllerResultEvent $event)
+    public function userRegistered(GetResponseForControllerResultEvent $event)
     {
+
         /**
          * @var User $user
          */
@@ -40,7 +47,7 @@ class PasswordHashSubscriber implements EventSubscriberInterface
 
         if(!$user instanceof User || !in_array(
                 $method,
-                [Request::METHOD_POST !== $method, Request::METHOD_PUT]
+                [Request::METHOD_POST]
             )
         ) {
             return;
@@ -49,6 +56,11 @@ class PasswordHashSubscriber implements EventSubscriberInterface
         //It is an User, we need to hash password here
         $user->setPassword(
             $this->passwordEncoder->encodePassword($user, $user->getPassword())
+        );
+
+        // Create confirmation token
+        $user->setConfirmationToken(
+            $this->tokenGenerator->getRandomSecureToken()
         );
     }
 }

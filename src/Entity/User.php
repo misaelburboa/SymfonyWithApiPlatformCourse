@@ -107,30 +107,32 @@ class User implements UserInterface
     private $retypedPassword;
 
     /**
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"put-reset-password"})
      * @Groups({"put-reset-password"})
      * @Assert\Regex(
      *      pattern="/(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{7,}/",
      *      message="Password must be seven characters long and contain at least one digit, one uppercase letter and one
-     *              lower case letter"
+     *              lower case letter",
+     *      groups={"put-reset-password"}
      * )
      */
     private $newPassword;
 
     /**
      * @Groups({"put-reset-password"})
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"put-reset-password"})
      * @Assert\Expression(
      *      "this.getNewPassword() === this.getNewRetypedPassword()",
-     *      message="Passwords does not match"
+     *      message="Passwords does not match",
+     *      groups={"put-reset-password"}
      * )
      */
     private $newRetypedPassword;
 
     /**
      * @Groups({"put-reset-password"})
-     * @Assert\NotBlank()
-     * @UserPassword()
+     * @Assert\NotBlank(groups={"put-reset-password"})
+     * @UserPassword(groups={"put-reset-password"})
      */
     private $oldPassword;
 
@@ -390,7 +392,6 @@ class User implements UserInterface
     public function setConfirmationToken($confirmationToken):self
     {
         $this->confirmationToken = $confirmationToken;
-
         return $this;
     }
 }
