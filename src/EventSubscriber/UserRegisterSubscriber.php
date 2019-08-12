@@ -13,16 +13,26 @@ use App\Security\TokenGenerator;
 
 class UserRegisterSubscriber implements EventSubscriberInterface 
 {
+    /** @var UserPasswordEncoderInterface */
     private $passwordEncoder;
 
+    /** @var TokenGenerator */
     private $tokenGenerator;
+
+    private $mailer;
+
+    private $swiftMessage;
 
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
-        TokenGenerator $tokenGenerator
+        TokenGenerator $tokenGenerator,
+        \Swift_Mailer $mailer
+
     ) {
         $this->passwordEncoder = $passwordEncoder;
         $this->tokenGenerator = $tokenGenerator;
+        $this->mailer = $mailer;
+        $this->swiftMessage = (new \Swift_Message());
     }
     /**
      * Returns an array of events this subscriber wants to listen to.
@@ -62,5 +72,14 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         $user->setConfirmationToken(
             $this->tokenGenerator->getRandomSecureToken()
         );
+
+        // Send email here
+        $message = $this->swiftMessage
+            ->setFrom('misaguitars@gmail.com')
+            ->setTo('misaguitars@gmail.com')
+            ->setSubject('Testing')
+            ->setBody('Hello man you rock!');
+
+            $this->mailer->send($message);
     }
 }
