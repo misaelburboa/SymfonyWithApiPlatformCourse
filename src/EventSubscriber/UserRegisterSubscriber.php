@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Security\TokenGenerator;
+use App\Email\Mailer;
 
 class UserRegisterSubscriber implements EventSubscriberInterface 
 {
@@ -21,18 +22,15 @@ class UserRegisterSubscriber implements EventSubscriberInterface
 
     private $mailer;
 
-    private $swiftMessage;
-
     public function __construct(
         UserPasswordEncoderInterface $passwordEncoder,
         TokenGenerator $tokenGenerator,
-        \Swift_Mailer $mailer
+        Mailer $mailer
 
     ) {
         $this->passwordEncoder = $passwordEncoder;
         $this->tokenGenerator = $tokenGenerator;
         $this->mailer = $mailer;
-        $this->swiftMessage = (new \Swift_Message());
     }
     /**
      * Returns an array of events this subscriber wants to listen to.
@@ -74,12 +72,6 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         );
 
         // Send email here
-        $message = $this->swiftMessage
-            ->setFrom('misaguitars@gmail.com')
-            ->setTo('misaguitars@gmail.com')
-            ->setSubject('Testing')
-            ->setBody('Hello man you rock!');
-
-            $this->mailer->send($message);
+        $this->mailer->sendConfirmationEmail($user);
     }
 }

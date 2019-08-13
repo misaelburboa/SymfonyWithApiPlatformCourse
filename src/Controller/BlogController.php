@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 class BlogController extends AbstractController
 {
     /**
-     * @Route("/{page}", name="blog", defaults={"page":1}, requirements={"page"="\d+"}, methods={"GET"})
+     * @Route("/{page}", name="blog", requirements={"page"="\d+"}, methods={"GET"})
      */
     public function getPostsList($page, Request $request)
     {
