@@ -28,18 +28,18 @@ class UserConfirmationSubscriber implements EventSubscriberInterface
 
     public function confirmUser(GetResponseForControllerResultEvent $event)
     {
-        $request = $event->getRequest();
-        if ('api_user_confirmations_post_collection' !== $request->get('_route')) {
-            return;
-        }
+        // $request = $event->getRequest();
+        // if ('api_user_confirmations_post_collection' !== $request->get('_route')) {
+        //     return;
+        // }
 
-        /** @var UserConfirmation $confirmationToken */
-        $confirmationToken = $event->getControllerResult();
+        // /** @var UserConfirmation $confirmationToken */
+        // $confirmationToken = $event->getControllerResult();
 
-        $this->userConfirmationService->confirmUser(
-            $confirmationToken->confirmationToken
-        );
+        // $this->userConfirmationService->confirmUser(
+        //     $confirmationToken->confirmationToken
+        // );
 
-        $event->setResponse(new JsonResponse(null, Response::HTTP_OK));
+        // $event->setResponse(new JsonResponse(null, Response::HTTP_OK));
     }
 }
