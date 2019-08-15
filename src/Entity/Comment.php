@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *      attributes={"order"={"published": "DESC"}},
  *      denormalizationContext={
  *          "groups"={"post"}
  *      },

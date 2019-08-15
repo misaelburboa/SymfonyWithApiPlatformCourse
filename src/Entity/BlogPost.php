@@ -12,10 +12,17 @@ use App\Entity\AuthoredEntityInterface;
 use DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
  * @ApiResource(
+ *      attributes={"order"={"published": "DESC"}},
  *      denormalizationContext={
  *          "groups"={"post"}
  *      },
@@ -35,6 +42,45 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
  *              "access_control"="is_granted('ROLE_WRITER')"
  *          }
  *      }
+ * )
+ * @ApiFilter(
+ *      SearchFilter::class,
+ *      properties={
+ *          "id": "exact",
+ *          "title": "partial",
+ *          "content": "partial",
+ *          "author": "exact",
+ *          "author.name": "partial"
+ *      }
+ * )
+ * @ApiFilter(
+ *      RangeFilter::class,
+ *      properties={
+ *          "id"
+ *      }
+ * )
+ * @ApiFilter(
+ *      PropertyFilter::class,
+ *      arguments={
+ *          "parameterName"="properties",
+ *          "overrideDefaultProperties": false,
+ *          "whitelist": {"id", "author", "slug", "title", "content"}
+ *      }
+ * )
+ * @ApiFilter(
+ *      DateFilter::class,
+ *      properties={
+ *          "published"
+ *      }
+ * )
+ * @ApiFilter(
+ *      OrderFilter::class,
+ *      properties={
+ *          "id",
+ *          "published",
+ *          "title"
+ *      },
+ *      arguments={"orderParameterName"="_order"}
  * )
  */
 class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
