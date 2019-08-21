@@ -1,0 +1,23 @@
+monolog:
+    handlers:
+        token_confirmation:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/token_confirmation_%kernel.environment%.log"
+        main:
+            type: stream # logs saved in files
+            path: "%kernel.logs_dir%/%kernel.environment%.log" #where the logs are saved
+            level: debug # debug|info|notice|warning|error|critical|alert|emergency
+            channels: ["!event", "!token_confirmation"]
+        # uncomment to get logging in your browser
+        # you may have to allow bigger header sizes in your Web server configuration
+        #firephp:
+        #    type: firephp
+        #    level: info
+        #chromephp:
+        #    type: chromephp
+        #    level: info
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!console"]

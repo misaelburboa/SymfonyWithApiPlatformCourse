@@ -22,7 +22,11 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
  * @ApiResource(
- *      attributes={"order"={"published": "DESC"}},
+ *      attributes={
+ *          "order"={"published": "DESC"},
+ *          "maximum_items_per_page"=10,
+ *          "pagination_partial"=true
+ *      },
  *      denormalizationContext={
  *          "groups"={"post"}
  *      },
